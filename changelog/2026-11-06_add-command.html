@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Изменения: команда /add — 06.11.2026</title>
+<style>
+  body { font-family: Arial, sans-serif; max-width: 900px; margin: 30px auto; padding: 0 16px; color: #222; }
+  h1 { border-bottom: 3px solid #2b6cb0; padding-bottom: 8px; }
+  h2 { color: #2b6cb0; margin-top: 28px; }
+  code, pre { background: #f4f4f4; border-radius: 4px; }
+  code { padding: 1px 5px; }
+  pre { padding: 12px; overflow-x: auto; border: 1px solid #ddd; }
+  table { border-collapse: collapse; width: 100%; margin: 12px 0; }
+  th, td { border: 1px solid #bbb; padding: 7px 10px; text-align: left; vertical-align: top; }
+  th { background: #e8f0fe; }
+  .note { background: #fff8e1; border-left: 4px solid #f0a500; padding: 10px 14px; }
+  .ok { color: #1b7f3b; font-weight: bold; }
+</style>
+</head>
+<body>
+
+<h1>Изменения: команда /add (только для администратора)</h1>
+<p><b>Дата:</b> 06.11.2026 &nbsp;|&nbsp; <b>Проект:</b> BestVahterBot &nbsp;|&nbsp; <b>Шаг:</b> добавление команды /add</p>
+
+<h2>1. Новая команда /add</h2>
+<ul>
+  <li><code>/add слово1, слово2, ...</code> — добавляет запрещённые слова в список фильтра.</li>
+  <li>Разделители: запятая, точка с запятой, перенос строки.</li>
+  <li><b>Только для администратора</b>: проверяется <code>message.from_user.id == ADMIN_CHAT_ID</code> (ID из <code>.env</code>). Остальным — ответ «⛔ Эта команда доступна только администратору».</li>
+  <li>Дубликаты (без учёта регистра) пропускаются с пометкой «уже были в списке».</li>
+  <li>Бот отвечает отчётом: сколько слов добавлено, сколько пропущено, сколько всего слов в списке.</li>
+</ul>
+
+<h2>2. Персистентность добавленных слов</h2>
+<ul>
+  <li>Новые слова сохраняются в <code>data/extra_words.json</code> (каталог смонтирован в контейнер как volume <code>./data:/app/data</code>) — переживают перезапуск и пересборку контейнера.</li>
+  <li>Загрузка при старте: <code>load_extra_words()</code>, сохранение — <code>save_extra_words()</code> (атомарная запись через <code>.tmp</code> + <code>os.replace</code>).</li>
+  <li>Базовый список <code>forb_Words</code> из <code>bestvahterbot_words.py</code> не изменяется — добавленные слова хранятся отдельно.</li>
+</ul>
+
+<h2>3. Регистронезависимый фильтр слов</h2>
+<p>Раньше проверка была <b>регистрозависимой</b> (<code>word in message.text</code>), из-за чего список слов дублировался в двух регистрах. Теперь:</p>
+<ul>
+  <li>При старте строится единый список <code>FORBIDDEN</code>: все слова приведены к нижнему регистру, дубликаты удалены (было 242 записи — стало 120 после схлопывания дублей).</li>
+  <li>Проверка: <code>word in message.text.lower()</code> — срабатывает на любой регистр.</li>
+</ul>
+
+<h2>4. Изменённые файлы</h2>
+<table>
+  <tr><th>Файл</th><th>Изменение</th></tr>
+  <tr><td><code>bestvahterbot.py</code></td><td>Импорт <code>re</code>; загрузка/сохранение <code>extra_words.json</code>; <code>build_forbidden_list()</code> и <code>FORBIDDEN</code>; хендлер <code>cmd_add</code>; <code>forbidden_msg</code> — сравнение в нижнем регистре; <code>/start</code> показывает актуальное число слов из <code>FORBIDDEN</code>.</td></tr>
+  <tr><td><code>readme.txt</code></td><td>В раздел «Команды бота» добавлено описание <code>/add</code> с примером.</td></tr>
+  <tr><td><code>LLMs.md</code></td><td>Создан: правило создавать HTML-файл changelog после каждой правки.</td></tr>
+  <tr><td><code>changelog/2026-11-06_add-command.html</code></td><td>Создан: этот файл.</td></tr>
+</table>
+
+<h2>5. Проверки</h2>
+<ul>
+  <li class="ok">py_compile — компиляция без ошибок.</li>
+  <li class="ok">Тест логики внутри контейнера: построение FORBIDDEN, добавление слов, отсев дубликатов, запись/чтение extra_words.json.</li>
+  <li class="ok">Контейнер пересобран (<code>docker compose up -d --build</code>), бот запущен, polling активен.</li>
+</ul>
+
+<h2>6. Пример использования</h2>
+<pre>/add новый спам словосочетание, ещё слово</pre>
+<pre>✅ Добавлено слов: 3 (новый спам, словосочетание, ещё слово)
+📋 Всего слов в списке: 216</pre>
+
+<p class="note"><b>Примечание:</b> после правки кода не забывать <code>docker compose up -d --build</code>. Слова, добавленные через /add, живут в volume и пересборки не требуют.</p>
+
+</body>
+</html>

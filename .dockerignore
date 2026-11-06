@@ -1,0 +1,15 @@
+# Секреты не должны попадать в образ — передаются через env_file в compose
+.env
+.git
+.gitignore
+__pycache__/
+*.pyc
+*.log
+nohup.out
+data/
+Dockerfile
+docker-compose.yml
+.dockerignore
+.env.example
+readme.txt
+comands.txt

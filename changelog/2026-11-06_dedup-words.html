@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Изменения: чистка списка слов — 06.11.2026</title>
+<style>
+  body { font-family: Arial, sans-serif; max-width: 900px; margin: 30px auto; padding: 0 16px; color: #222; }
+  h1 { border-bottom: 3px solid #2b6cb0; padding-bottom: 8px; }
+  h2 { color: #2b6cb0; margin-top: 28px; }
+  code, pre { background: #f4f4f4; border-radius: 4px; }
+  code { padding: 1px 5px; }
+  pre { padding: 12px; overflow-x: auto; border: 1px solid #ddd; }
+  table { border-collapse: collapse; width: 100%; margin: 12px 0; }
+  th, td { border: 1px solid #bbb; padding: 7px 10px; text-align: left; vertical-align: top; }
+  th { background: #e8f0fe; }
+  .ok { color: #1b7f3b; font-weight: bold; }
+</style>
+</head>
+<body>
+
+<h1>Изменения: удалены дубликаты слов в разных регистрах</h1>
+<p><b>Дата:</b> 06.11.2026 &nbsp;|&nbsp; <b>Проект:</b> BestVahterBot &nbsp;|&nbsp; <b>Шаг:</b> чистка bestvahterbot_words.py</p>
+
+<h2>1. Суть</h2>
+<ul>
+  <li>Файл <code>bestvahterbot_words.py</code> содержал 242 записи, где почти каждое слово дублировалось в двух (иногда более) регистрах: «Такси» и «такси», «Продам» и «продам» и т.д.</li>
+  <li>Дубликаты возникли исторически: старая проверка <code>word in message.text</code> была регистрозависимой.</li>
+  <li>После перехода (шаг 2026-11-06_add-command) на регистронезависимое сравнение дубли в файле стали бесполезны.</li>
+</ul>
+
+<h2>2. Что сделано</h2>
+<ul>
+  <li>Скриптом удалены дубликаты без учёта регистра; сохранено первое вхождение, приведённое к <b>нижнему регистру</b>.</li>
+  <li>Порядок слов сохранён (по первому вхождению).</li>
+  <li>Итог: <b>242 записи → 120 уникальных слов</b>, файл сократился с 242 до 122 строк.</li>
+</ul>
+
+<h2>3. Изменённые файлы</h2>
+<table>
+  <tr><th>Файл</th><th>Изменение</th></tr>
+  <tr><td><code>bestvahterbot_words.py</code></td><td>Перезаписан: уникальный список <code>forb_Words</code> из 120 слов в нижнем регистре.</td></tr>
+  <tr><td><code>changelog/2026-11-06_dedup-words.html</code></td><td>Создан: этот файл.</td></tr>
+</table>
+
+<h2>4. Проверки</h2>
+<ul>
+  <li class="ok">py_compile bestvahterbot_words.py — без ошибок.</li>
+  <li class="ok">Импорт: 120 слов, все в нижнем регистре.</li>
+  <li class="ok">Рантайм-список FORBIDDEN в коде: тоже 120 — совпадает с файлом.</li>
+  <li class="ok">Контейнер пересобран, бот запущен (Start polling).</li>
+</ul>
+
+<h2>5. Примечания</h2>
+<ul>
+  <li>Фильтр по-прежнему ловит слова в любом регистре (сравнение через <code>.lower()</code>).</li>
+  <li>Новые слова, добавленные командой <code>/add</code>, как и раньше, хранятся отдельно в <code>data/extra_words.json</code>.</li>
+</ul>
+
+</body>
+</html>

@@ -1,0 +1,12 @@
+
+nohup python3 bestvahterbot.py &	
+
+ps -ax | grep python
+
+conda activate pyt_bot_env_tourist
+nohup python3 bestvahterbot.py &
+
+ps -ax | grep python
+
+cd /home/alivkon/anaconda3/envs/pytbot_env/telegram/BestVahterBot
+

@@ -1,0 +1,16 @@
+services:
+  bestvahter-bot:
+    build: .
+    image: bestvahterbot:latest
+    container_name: bestvahter_bot
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data
+    # Боту нужен только исходящий доступ к api.telegram.org — порты не публикуем
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
