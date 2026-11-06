@@ -11,5 +11,4 @@ Dockerfile
 docker-compose.yml
 .dockerignore
 .env.example
-readme.txt
 comands.txt
