@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Отчёт по количеству участников чатов</title>
+  <style>
+    :root { color-scheme: light; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+    body { max-width: 900px; margin: 40px auto; padding: 0 24px; color: #202938; line-height: 1.6; }
+    h1, h2 { color: #123b62; }
+    .meta, .note { padding: 12px 16px; background: #eef5fb; border-left: 4px solid #2878b8; }
+    .summary { display: flex; flex-wrap: wrap; gap: 12px; margin: 20px 0; }
+    .metric { min-width: 150px; padding: 14px 18px; border: 1px solid #d9e1e8; border-radius: 10px; }
+    .metric strong { display: block; color: #123b62; font-size: 1.35rem; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 9px 12px; text-align: left; border-bottom: 1px solid #d9e1e8; }
+    th { background: #f4f7fa; }
+    td:last-child, th:last-child { text-align: right; }
+    tbody tr:nth-child(even) { background: #fafbfd; }
+    .count { font-variant-numeric: tabular-nums; }
+  </style>
+</head>
+<body>
+  <h1>Количество участников зарегистрированных чатов</h1>
+  <p class="meta"><b>Дата проверки:</b> 13.11.2026<br><b>Источник:</b> Telegram Bot API, метод <code>getChatMemberCount</code>; чаты взяты из локального списка зарегистрированных чатов бота.</p>
+
+  <div class="summary">
+    <div class="metric"><strong>64</strong>чата всего</div>
+    <div class="metric"><strong>62</strong>группы</div>
+    <div class="metric"><strong>2&nbsp;013</strong>участий в группах</div>
+    <div class="metric"><strong>2</strong>личных чата</div>
+  </div>
+
+  <p class="note">Число 2&nbsp;013 — сумма участников по группам. Один и тот же человек, состоящий в нескольких группах, учитывается отдельно в каждой группе. Два личных чата возвращают по 2 участника и не включены в сумму групп.</p>
+
+  <h2>Группы — по убыванию числа участников</h2>
+  <table>
+    <thead><tr><th>№</th><th>Чат</th><th>Участников</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Профессиональный массаж в Белграде🙌</td><td class="count">223</td></tr>
+      <tr><td>2</td><td>ไทย ๛</td><td class="count">159</td></tr>
+      <tr><td>3</td><td>Недвижимости Pаtаyа</td><td class="count">118</td></tr>
+      <tr><td>4</td><td>ខ្មែរ</td><td class="count">113</td></tr>
+      <tr><td>5</td><td>Việt 🇻🇳</td><td class="count">111</td></tr>
+      <tr><td>6</td><td>Guarañol</td><td class="count">70</td></tr>
+      <tr><td>7</td><td>ລາວ ❤️‍🔥</td><td class="count">69</td></tr>
+      <tr><td>8</td><td>Paramount</td><td class="count">48</td></tr>
+      <tr><td>9</td><td>Quechuañol</td><td class="count">32</td></tr>
+      <tr><td>10</td><td>中 China</td><td class="count">32</td></tr>
+      <tr><td>11</td><td>Finougor 🏔️</td><td class="count">29</td></tr>
+      <tr><td>12</td><td>Русь</td><td class="count">29</td></tr>
+      <tr><td>13</td><td>Argentiñol</td><td class="count">28</td></tr>
+      <tr><td>14</td><td>안 Koreán</td><td class="count">28</td></tr>
+      <tr><td>15</td><td>Birmánia</td><td class="count">27</td></tr>
+      <tr><td>16</td><td>Cryptología</td><td class="count">27</td></tr>
+      <tr><td>17</td><td>日本 Japan</td><td class="count">27</td></tr>
+      <tr><td>18</td><td>Aymarañol</td><td class="count">26</td></tr>
+      <tr><td>19</td><td>བོད ࿇</td><td class="count">26</td></tr>
+      <tr><td>20</td><td>Azteca</td><td class="count">25</td></tr>
+      <tr><td>21</td><td>Brazil</td><td class="count">25</td></tr>
+      <tr><td>22</td><td>Maya ☀️</td><td class="count">25</td></tr>
+      <tr><td>23</td><td>ɪŋlɪʃ 🇺🇸</td><td class="count">25</td></tr>
+      <tr><td>24</td><td>ไทไย</td><td class="count">25</td></tr>
+      <tr><td>25</td><td>TATARIA ☀️</td><td class="count">24</td></tr>
+      <tr><td>26</td><td>ᠮᠣᠩᠭᠣᠯ Mongol</td><td class="count">24</td></tr>
+      <tr><td>27</td><td>Afghani 🇦🇫</td><td class="count">23</td></tr>
+      <tr><td>28</td><td>Bali 🇮🇩</td><td class="count">23</td></tr>
+      <tr><td>29</td><td>Dutch</td><td class="count">23</td></tr>
+      <tr><td>30</td><td>IVRIT</td><td class="count">23</td></tr>
+      <tr><td>31</td><td>Aborí</td><td class="count">22</td></tr>
+      <tr><td>32</td><td>Litu - Latu 🇱🇹 🇱🇻</td><td class="count">22</td></tr>
+      <tr><td>33</td><td>SevKav 🇦🇿</td><td class="count">22</td></tr>
+      <tr><td>34</td><td>Ελλάδα</td><td class="count">22</td></tr>
+      <tr><td>35</td><td>Slovakia 🇨🇿🇸🇰</td><td class="count">21</td></tr>
+      <tr><td>36</td><td>Беларусь 🇧🇾</td><td class="count">21</td></tr>
+      <tr><td>37</td><td>සිං</td><td class="count">20</td></tr>
+      <tr><td>38</td><td>Amazoñol</td><td class="count">19</td></tr>
+      <tr><td>39</td><td>Caribiñol</td><td class="count">19</td></tr>
+      <tr><td>40</td><td>Mapuche</td><td class="count">19</td></tr>
+      <tr><td>41</td><td>Olmeca</td><td class="count">18</td></tr>
+      <tr><td>42</td><td>Ukraïna</td><td class="count">18</td></tr>
+      <tr><td>43</td><td>Arawacoñol</td><td class="count">17</td></tr>
+      <tr><td>44</td><td>Armen</td><td class="count">17</td></tr>
+      <tr><td>45</td><td>Latina</td><td class="count">17</td></tr>
+      <tr><td>46</td><td>Mezamericañol</td><td class="count">17</td></tr>
+      <tr><td>47</td><td>Nepali</td><td class="count">17</td></tr>
+      <tr><td>48</td><td>Oceanía 🇳🇿</td><td class="count">17</td></tr>
+      <tr><td>49</td><td>Sanskrit</td><td class="count">17</td></tr>
+      <tr><td>50</td><td>IndOceanìa</td><td class="count">16</td></tr>
+      <tr><td>51</td><td>SulKaV</td><td class="count">16</td></tr>
+      <tr><td>52</td><td>Atlantia</td><td class="count">15</td></tr>
+      <tr><td>53</td><td>Indius 🇺🇸</td><td class="count">15</td></tr>
+      <tr><td>54</td><td>Italiano</td><td class="count">15</td></tr>
+      <tr><td>55</td><td>Dëutsch</td><td class="count">14</td></tr>
+      <tr><td>56</td><td>Swahili</td><td class="count">14</td></tr>
+      <tr><td>57</td><td>Bengalia</td><td class="count">12</td></tr>
+      <tr><td>58</td><td>Ethiopian</td><td class="count">12</td></tr>
+      <tr><td>59</td><td>Wolof</td><td class="count">12</td></tr>
+      <tr><td>60</td><td>Esperanto</td><td class="count">8</td></tr>
+      <tr><td>61</td><td>தமிழ் Tamil</td><td class="count">8</td></tr>
+      <tr><td>62</td><td>Catalano</td><td class="count">7</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Личные чаты</h2>
+  <table>
+    <thead><tr><th>Чат</th><th>Участников</th></tr></thead>
+    <tbody>
+      <tr><td>AlexKonishev</td><td class="count">2</td></tr>
+      <tr><td>AlexAIBotMaster</td><td class="count">2</td></tr>
+    </tbody>
+  </table>
+</body>
+</html>

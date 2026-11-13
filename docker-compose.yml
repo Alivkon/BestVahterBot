@@ -4,6 +4,16 @@ services:
     image: bestvahterbot:latest
     container_name: bestvahter_bot
     restart: always
+    init: true
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=16m
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 64
+    stop_grace_period: 30s
     env_file:
       - .env
     volumes:

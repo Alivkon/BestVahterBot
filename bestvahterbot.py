@@ -26,7 +26,11 @@ ADMIN_CHAT_ID = int(os.getenv("ADMIN_CHAT_ID", "0"))
 if not BOT_TOKEN:
     raise SystemExit("BOT_TOKEN не найден. Создайте файл .env (см. .env.example) рядом с ботом.")
 
-from bestvahterbot_words import forb_Words
+from bestvahterbot_words import (
+    add_forbidden_words,
+    get_forbidden_words,
+    initialize_word_db,
+)
 
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher(bot)
@@ -72,44 +76,9 @@ def remember_chat(message: types.Message):
     save_chats()
 
 
-# --- Запрещённые слова: базовый список + добавленные через /add ---
-EXTRA_WORDS_FILE = os.path.join(DATA_DIR, "extra_words.json")
-
-
-def load_extra_words():
-    try:
-        with open(EXTRA_WORDS_FILE, encoding="utf-8") as f:
-            return json.load(f)
-    except (FileNotFoundError, json.JSONDecodeError):
-        return []
-
-
-def save_extra_words():
-    try:
-        os.makedirs(DATA_DIR, exist_ok=True)
-        tmp = EXTRA_WORDS_FILE + ".tmp"
-        with open(tmp, "w", encoding="utf-8") as f:
-            json.dump(extra_forb_Words, f, ensure_ascii=False, indent=2)
-        os.replace(tmp, EXTRA_WORDS_FILE)
-    except Exception as e:
-        log.warning("Не удалось сохранить добавленные слова: %s", e)
-
-
-extra_forb_Words = load_extra_words()
-
-
-def build_forbidden_list():
-    """Единый список запрещённых слов в нижнем регистре, без дубликатов."""
-    seen, result = set(), []
-    for word in forb_Words + extra_forb_Words:
-        wl = word.strip().lower()
-        if wl and wl not in seen:
-            seen.add(wl)
-            result.append(wl)
-    return result
-
-
-FORBIDDEN = build_forbidden_list()
+# --- Запрещённые слова хранятся в SQLite в каталоге data/ ---
+initialize_word_db()
+FORBIDDEN = get_forbidden_words()
 
 
 @dp.message_handler(commands=["add"])
@@ -125,19 +94,9 @@ async def cmd_add(message: types.Message):
                             "Слова разделяйте запятыми или переносами строк.")
         return
     new_words = [w.strip() for w in re.split(r"[,\n;]+", args) if w.strip()]
-    added, skipped = [], []
-    existing = set(FORBIDDEN)
-    for word in new_words:
-        wl = word.lower()
-        if wl in existing:
-            skipped.append(word)
-            continue
-        existing.add(wl)
-        added.append(word)
+    added, skipped = add_forbidden_words(new_words)
     if added:
-        extra_forb_Words.extend(added)
-        save_extra_words()
-        FORBIDDEN.extend(w.lower() for w in added)
+        FORBIDDEN.extend(w.casefold() for w in added)
     parts = []
     if added:
         parts.append("✅ Добавлено слов: {} ({})".format(len(added), ", ".join(added)))
@@ -237,7 +196,7 @@ def contains_cjk(text: str) -> bool:
 
 @dp.message_handler(content_types=types.ContentType.TEXT)
 async def echo(message: types.Message):
-    # Пересылаем все сообщения администратору для выборки слов и сравнения с файлом
+    # Проверяем все сообщения по списку слов, загруженному из SQLite.
     if not message.text:
         return
     remember_chat(message)
@@ -256,7 +215,7 @@ async def echo(message: types.Message):
 async def forbidden_msg(message: types.Message):
     if not message.text:
         return
-    text_lower = message.text.lower()
+    text_lower = message.text.casefold()
     for word in FORBIDDEN:
         if word in text_lower:
             print("Есть такое слово")

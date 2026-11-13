@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Слова в SQLite</title>
+  <style>
+    :root { color-scheme: light; font-family: system-ui, sans-serif; }
+    body { max-width: 860px; margin: 40px auto; padding: 0 24px; color: #202938; line-height: 1.6; }
+    h1, h2 { color: #123b62; }
+    .meta, .note { padding: 12px 16px; background: #eef5fb; border-left: 4px solid #2878b8; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 10px; text-align: left; vertical-align: top; border-bottom: 1px solid #d9e1e8; }
+    code { background: #f1f3f5; padding: 2px 5px; border-radius: 4px; }
+    .ok { color: #176b3a; }
+  </style>
+</head>
+<body>
+  <h1>Список запрещённых слов перенесён в SQLite</h1>
+  <p class="meta"><b>Дата:</b> 13.11.2026 &nbsp;|&nbsp; <b>Проект:</b> BestVahterBot</p>
+
+  <h2>Что изменено</h2>
+  <ul>
+    <li>В <code>data/forbidden_words.sqlite3</code> создана таблица запрещённых слов с уникальным регистронезависимым ключом.</li>
+    <li>Начальный список загружается в базу однократно при первом запуске.</li>
+    <li>Слова, ранее сохранённые в <code>data/extra_words.json</code>, автоматически импортируются при первом запуске с базой.</li>
+    <li>Команда <code>/add</code> записывает новые слова прямо в SQLite; дубликаты отсекаются базой и нормализацией Unicode через <code>casefold()</code>.</li>
+    <li>База размещена в <code>data/</code>, который уже подключён как постоянный Docker volume.</li>
+  </ul>
+
+  <h2>Изменённые файлы</h2>
+  <table>
+    <thead><tr><th>Файл</th><th>Изменение</th></tr></thead>
+    <tbody>
+      <tr><td><code>bestvahterbot_words.py</code></td><td>Вместо списка как рабочего хранилища реализованы создание SQLite-БД, разовая начальная загрузка, миграция старого JSON и операции чтения/добавления.</td></tr>
+      <tr><td><code>bestvahterbot.py</code></td><td>Загрузка списка и команда <code>/add</code> переведены на SQLite; проверка текста использует <code>casefold()</code>.</td></tr>
+      <tr><td><code>README.md</code></td><td>Обновлены описание хранения слов и документация миграции.</td></tr>
+      <tr><td><code>data/forbidden_words.sqlite3</code></td><td>Создана рабочая база с 120 начальными словами.</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Проверки</h2>
+  <ul>
+    <li class="ok"><code>py_compile</code> для обоих Python-файлов — успешно.</li>
+    <li class="ok">Изолированный тест начальной загрузки, миграции JSON, добавления слов и отсева повторов без учёта регистра — успешно.</li>
+    <li class="ok">Рабочая SQLite-БД создана и проверена: 120 уникальных слов.</li>
+    <li>Полный запуск Telegram-бота и запросы к Telegram API не выполнялись.</li>
+  </ul>
+
+  <p class="note"><b>Примечание:</b> при развёртывании сохраните каталог <code>data/</code>. На существующем экземпляре JSON-слова переносятся в БД однократно; файл JSON после миграции не используется.</p>
+</body>
+</html>
